@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "1079017470975",
+    "firebase_url": "https://dummydata-1601d.firebaseio.com",
+    "project_id": "dummydata-1601d",
+    "storage_bucket": "dummydata-1601d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079017470975:android:87211f97c0ffe2e5e645ca",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079017470975-7r166fvcrcjfe3vrg8qum6qn3oe6g80r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8E2NWk2G5jXOoX8Q-fd05wmxUVqyyQi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079017470975-7r166fvcrcjfe3vrg8qum6qn3oe6g80r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079017470975:android:2880683693b9de91e645ca",
+        "android_client_info": {
+          "package_name": "com.example.trailapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079017470975-7r166fvcrcjfe3vrg8qum6qn3oe6g80r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8E2NWk2G5jXOoX8Q-fd05wmxUVqyyQi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079017470975-7r166fvcrcjfe3vrg8qum6qn3oe6g80r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
