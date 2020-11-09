@@ -117,10 +117,10 @@ public class RegisterActivity extends AppCompatActivity {
                             UserID = mAuth.getCurrentUser().getUid();
                             DocumentReference db = mStore.collection("Users").document(UserID);
                             Map<String,Object> user = new HashMap<>();
-                            user.put("Name ",name);
-                            user.put("Email ",emailId);
-                            user.put("Phone ",phone);
-                            user.put("URI ","https://firebasestorage.googleapis.com/v0/b/dummydata-1601d.appspot.com/o/Images%2FProfileImages%2Fa444e3c23abb2cec25adface54e61317.png?alt=media&token=d32da7a9-10f6-4f35-91a7-acaf895fc4c2");
+                            user.put("Name",name);
+                            user.put("Email",emailId);
+                            user.put("Phone",phone);
+                            user.put("URI","https://firebasestorage.googleapis.com/v0/b/dummydata-1601d.appspot.com/o/Images%2FProfileImages%2Fa444e3c23abb2cec25adface54e61317.png?alt=media&token=d32da7a9-10f6-4f35-91a7-acaf895fc4c2");
                             db.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

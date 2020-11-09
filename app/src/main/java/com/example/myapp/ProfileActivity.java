@@ -86,11 +86,11 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
 
-                String ImgUrl = documentSnapshot.getString("URI ");
+                String ImgUrl = documentSnapshot.getString("URI");
                 Picasso.get().load(ImgUrl).into(ImgProfile);
-                tvName.setText(documentSnapshot.getString("Name "));
-                tvEmail.setText(documentSnapshot.getString("Email "));
-                tvPhone.setText(documentSnapshot.getString("Phone "));
+                tvName.setText(documentSnapshot.getString("Name"));
+                tvEmail.setText(documentSnapshot.getString("Email"));
+                tvPhone.setText(documentSnapshot.getString("Phone"));
                 }
             });
         }
@@ -198,7 +198,7 @@ public class ProfileActivity extends AppCompatActivity {
                             String photoLink = uri.toString();
                             //Update URI to FireStore
                             DocumentReference db = mStore.collection("Users").document(UserID);
-                            db.update("URI ", photoLink);
+                            db.update("URI", photoLink);
                         }
                     });
                     progressDialog.dismiss();

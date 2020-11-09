@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements Filterable {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     String[] HospitalName;
     String[] HospitalDescription;
@@ -50,43 +50,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public int getItemCount() {
         return HospitalName.length;
     }
-
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-
-    Filter filter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-
-            List<String> filteredList = new ArrayList<>();
-            if(constraint.toString().isEmpty()) {
-                for (int i=0; i<HospitalNameAll.length; i++) {
-                    filteredList.add(HospitalNameAll[i]);
-                }
-            }else{
-                for(String movie:HospitalNameAll){
-                    if(movie.toLowerCase().contains(constraint.toString().toLowerCase())){
-                        filteredList.add(movie);
-                    }
-                }
-            }
-
-            FilterResults FR = new FilterResults();
-            FR.values = filteredList;
-            return FR;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            HospitalName = null;
-            HospitalName = (String[]) results.values;
-            notifyDataSetChanged();
-
-        }
-    };
-
 
 
     class ViewHolder extends RecyclerView.ViewHolder{

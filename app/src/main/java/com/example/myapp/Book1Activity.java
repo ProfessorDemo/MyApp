@@ -39,7 +39,6 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
     private final String TAG = "Book1Activity";
 
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +54,7 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
         SPHospitalTreatments.setVisibility(View.GONE);
 
 
-        SVHospital.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                recyclerAdapter.getFilter().filter(newText);
-                return false;
-            }
-        });
 
 
 
@@ -85,7 +73,7 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
          */
 
 
-        mStore.collection("Hospitals").orderBy("Name").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mStore.collection("Hospitals").orderBy("name").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -102,8 +90,8 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         HospitalIDList[i] = document.getId();
-                        HospitalNameX[i] = document.getString("Name");
-                        HospitalDescriptionX[i] = document.getString("About Us");
+                        HospitalNameX[i] = document.getString("name");
+                        HospitalDescriptionX[i] = document.getString("aboutUs");
 
 
                         i++;
@@ -112,8 +100,9 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
                     ArrayAdapter adapter1 = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item,HospitalNameX);
                     adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     SPHospitalNames.setAdapter(adapter1);
-
                     SPHospitalNames.setOnItemSelectedListener(Book1Activity.this);
+
+
 
                     recyclerAdapter = new RecyclerAdapter(HospitalNameX,HospitalDescriptionX);
                     RVHospital.setAdapter(recyclerAdapter);
@@ -154,10 +143,10 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> SPHospitalNames, View view, int position, long id) {
-        String Info = SPHospitalNames.getItemAtPosition(position).toString();
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String Info = parent.getItemAtPosition(position).toString();
 
-        mStore.collection("Hospitals").whereEqualTo("Name",Info).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mStore.collection("Hospitals").whereEqualTo("name",Info).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()){
@@ -197,6 +186,8 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
         SPHospitalTreatments.setVisibility(View.GONE);
 
     }
+
+
 
 
 }
