@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,7 +31,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
-public class Book1Activity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class Book1Activity extends AppCompatActivity {
 
     SearchView SVHospital;
     Spinner SPHospitalNames, SPHospitalTreatments;
@@ -37,6 +39,7 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
     RecyclerAdapter recyclerAdapter;
     FirebaseFirestore mStore;
     private final String TAG = "Book1Activity";
+
 
 
     @Override
@@ -78,15 +81,16 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     int x = 0;
-                    for (QueryDocumentSnapshot document : task.getResult()){
+                    for (QueryDocumentSnapshot document : task.getResult()) {
                         x++;
                     }
 
-                    String[] HospitalIDList = new String[x];
-                    String[] HospitalNameX = new String[x];
-                    String[] HospitalDescriptionX = new String[x];
-                    int i = 0;
-
+                    String[] HospitalIDList = new String[x+1];
+                    String[] HospitalNameX = new String[x+1];
+                    String[] HospitalDescriptionX = new String[x+1];
+                    int i = 1;
+                    HospitalNameX[0]= "Hospital";
+                    HospitalDescriptionX[0]= "";
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         HospitalIDList[i] = document.getId();
@@ -97,14 +101,14 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
                         i++;
                     }
 
-                    ArrayAdapter adapter1 = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item,HospitalNameX);
+                    ArrayAdapter adapter1 = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item, HospitalNameX);
                     adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     SPHospitalNames.setAdapter(adapter1);
-                    SPHospitalNames.setOnItemSelectedListener(Book1Activity.this);
+                    SPHospitalNames.setOnItemSelectedListener(new SPHospitalNames());
 
 
 
-                    recyclerAdapter = new RecyclerAdapter(HospitalNameX,HospitalDescriptionX);
+                    recyclerAdapter = new RecyclerAdapter(HospitalNameX, HospitalDescriptionX);
                     RVHospital.setAdapter(recyclerAdapter);
                     DividerItemDecoration Did = new DividerItemDecoration(Book1Activity.this, DividerItemDecoration.VERTICAL);
                     RVHospital.addItemDecoration(Did);
@@ -119,75 +123,82 @@ public class Book1Activity extends AppCompatActivity implements AdapterView.OnIt
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String Info = parent.getItemAtPosition(position).toString();
 
-        mStore.collection("Hospitals").whereEqualTo("name",Info).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()){
-                    String ID;
-                    ID = document.getId();
-                    mStore.collection("Hospitals").document(ID).collection("Treatments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            int x = 0;
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                x ++;
-                            }
-                            String[] HospitalTreatment = new String[x];
-                            int i=0;
-                            for(QueryDocumentSnapshot document :task.getResult()){
-                                HospitalTreatment[i] = document.getId();
-                                i++;
-                            }
-                            SPHospitalTreatments.setVisibility(View.VISIBLE);
+    class SPHospitalNames implements AdapterView.OnItemSelectedListener {
 
-                            ArrayAdapter adapter = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item,HospitalTreatment);
-                            adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                            SPHospitalTreatments.setAdapter(adapter);
-                        }
-                    });
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String Info = parent.getItemAtPosition(position).toString();
+            if(Info!="Hospital"){
+            mStore.collection("Hospitals").whereEqualTo("name", Info).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String ID;
+                        ID = document.getId();
+                        mStore.collection("Hospitals").document(ID).collection("Treatments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                int x = 0;
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    x++;
+                                }
+                                String[] HospitalTreatment = new String[x+1];
+                                String[] HospitalID = new String[x+1];
+                                int i = 1;
+                                HospitalTreatment[0]="Treatment";
+                                HospitalID[0]="ID";
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    HospitalID[i] = document.getId();
+                                    HospitalTreatment[i] = document.getString("Treatment");
+                                    i++;
+                                }
+                                SPHospitalTreatments.setVisibility(View.VISIBLE);
+                                ArrayAdapter adapter = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item, HospitalID);
+                                adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                SPHospitalTreatments.setAdapter(adapter);
+                                SPHospitalTreatments.setOnItemSelectedListener(new SPHospitalTreat());
+                            }
+
+                        });
+                    }
                 }
+            });
+        }
+        }
+
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            SPHospitalTreatments.setVisibility(View.GONE);
+
+        }
+
+
+    }
+
+
+    class SPHospitalTreat implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String Info = parent.getItemAtPosition(position).toString();
+            if(Info!="Treatment") {
+                startActivity(new Intent(getApplicationContext(),Book2Activity.class));
             }
-        });
 
 
+        }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        SPHospitalTreatments.setVisibility(View.GONE);
+        }
 
     }
-
-
-
 
 }
+
+
+
