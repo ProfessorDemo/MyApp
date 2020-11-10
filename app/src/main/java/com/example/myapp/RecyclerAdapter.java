@@ -15,12 +15,12 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    String[] HospitalName;
-    String[] HospitalDescription;
-    String[] HospitalNameAll;
+    List<String> HospitalName;
+    List<String> HospitalDescription;
+    List<String> HospitalNameAll;
 
 
-    public RecyclerAdapter(String[] hospitalName, String[] hospitalDescription) {
+    public RecyclerAdapter(List<String> hospitalName, List<String> hospitalDescription) {
         HospitalName = hospitalName;
         HospitalDescription = hospitalDescription;
         HospitalNameAll = hospitalName;
@@ -40,15 +40,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.TVHospitalName.setText(""+ HospitalName[position]);
-        holder.TVHospitalDescription.setText(""+ HospitalDescription[position]);
+        holder.TVHospitalName.setText(""+ HospitalName.get(position));
+        holder.TVHospitalDescription.setText(""+ HospitalDescription.get(position));
 
 
     }
 
     @Override
     public int getItemCount() {
-        return HospitalName.length;
+        return HospitalName.size();
     }
 
 
