@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
@@ -18,13 +19,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     List<String> HospitalName;
     List<String> HospitalDescription;
     List<String> HospitalNameAll;
+    List<String> HospitalDescriptionAll;
 
 
     public RecyclerAdapter(List<String> hospitalName, List<String> hospitalDescription) {
-        HospitalName = hospitalName;
-        HospitalDescription = hospitalDescription;
-        HospitalNameAll = hospitalName;
+        this.HospitalName = hospitalName;
+        this.HospitalDescription = hospitalDescription;
+        this.HospitalNameAll = new ArrayList<>(hospitalName);
+        this.HospitalDescriptionAll = new ArrayList<>(hospitalDescription);
     }
+
 
     @NonNull
     @Override
@@ -52,6 +56,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
 
+
+
+
+   void FR (String NXT) {
+       FilterName filterName = new FilterName();
+       FilterDesc filterDesc = new FilterDesc();
+       filterDesc.getFilter().filter(NXT);
+       filterName.getFilter().filter(NXT);
+   }
+
+
     class ViewHolder extends RecyclerView.ViewHolder{
 
 
@@ -69,4 +84,101 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
     }
 
+
+
+
+    class FilterName implements Filterable{
+        @Override
+        public Filter getFilter() {
+            return filter;
+        }
+
+        Filter filter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                List<String> filteredList = new ArrayList<>();
+
+                if (constraint.toString().isEmpty()) {
+                    filteredList.addAll(HospitalNameAll);
+                } else {
+                    int Count = 0;
+                    for (String hospital : HospitalNameAll) {
+                        if (hospital.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            filteredList.add(hospital);
+                            Count++;
+                        }
+
+                    }
+                    if(Count == 0){
+                        filteredList.add("Please Enter a Valid Hospital Detail");
+                    }
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                HospitalName.clear();
+                HospitalName.addAll((Collection<? extends String>) results.values);
+                notifyDataSetChanged();
+
+            }
+        };
+
+
+
+
+    }
+
+    class FilterDesc implements Filterable{
+
+        @Override
+        public Filter getFilter() {
+            return filter;
+        }
+         Filter filter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                List<String> filteredList = new ArrayList<>();
+
+                if (constraint.toString().isEmpty()) {
+                    filteredList.addAll(HospitalDescriptionAll);
+                } else {
+                    int Count = 0;
+                    for (String hospital : HospitalDescriptionAll) {
+                        if (hospital.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            filteredList.add(hospital);
+                            Count++;
+                        }
+                    }
+                    if(Count == 0){
+                        filteredList.add("Please Enter a Valid Hospital Detail");
+                    }
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                HospitalDescription.clear();
+                HospitalDescription.addAll((Collection<? extends String>) results.values);
+                notifyDataSetChanged();
+
+            }
+        };
+
+    }
+
+
 }
+

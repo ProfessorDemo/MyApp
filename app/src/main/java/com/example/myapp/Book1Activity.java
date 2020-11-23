@@ -2,7 +2,6 @@ package com.example.myapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import android.widget.SearchView;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,7 +31,7 @@ import java.util.List;
 
 public class Book1Activity extends AppCompatActivity {
 
-    SearchView SVHospital;
+    android.widget.SearchView SVHospital;
     Spinner SPHospitalNames, SPHospitalTreatments;
     RecyclerView RVHospital;
     RecyclerAdapter recyclerAdapter;
@@ -61,7 +59,18 @@ public class Book1Activity extends AppCompatActivity {
 
 
 
+        SVHospital.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                recyclerAdapter.FR(newText);
+                return false;
+            }
+        });
 
 
 
