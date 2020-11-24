@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/NavHome"
+        android:icon="@drawable/ic_baseline_home_48"
+        android:title="Home"/>
+
+    <item android:id="@+id/NavBook"
+        android:icon="@drawable/ic_baseline_add_circle_outline_48"
+        android:title="Book"/>
+
+    <item android:id="@+id/NavProfile"
+        android:icon="@drawable/ic_baseline_account_circle_48"
+        android:title="Profile"/>
+
+    <item android:id="@+id/NavSetting"
+        android:icon="@drawable/ic_baseline_settings_48"
+        android:title="Settings"/>
+
+
+</menu>

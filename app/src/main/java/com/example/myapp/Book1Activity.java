@@ -11,15 +11,18 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,11 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Book1Activity extends AppCompatActivity {
+public class Book1Activity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+    Button BtnBook;
     android.widget.SearchView SVHospital;
     Spinner SPHospitalNames, SPHospitalTreatments;
     RecyclerView RVHospital;
+
+    BottomNavigationView bottomNavigationView2;
+
     RecyclerAdapter recyclerAdapter;
     FirebaseFirestore mStore;
     private final String TAG = "Book1Activity";
@@ -45,6 +52,7 @@ public class Book1Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book1);
 
+        BtnBook = findViewById(R.id.BtnBook);
 
         mStore = FirebaseFirestore.getInstance();
 
@@ -53,7 +61,12 @@ public class Book1Activity extends AppCompatActivity {
         SVHospital = findViewById(R.id.SVHospital);
         RVHospital = findViewById(R.id.RVHospital);
         SPHospitalTreatments.setVisibility(View.GONE);
+        BtnBook.setVisibility(View.GONE);
 
+        bottomNavigationView2 = findViewById(R.id.BottomNav2);
+
+        bottomNavigationView2.setSelectedItemId(R.id.NavBook);
+        bottomNavigationView2.setOnNavigationItemSelectedListener(this);
 
 
 
@@ -86,7 +99,7 @@ public class Book1Activity extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
                     int x = 0;
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                    for (QueryDocumentSnapshot ignored : task.getResult()) {
                         x++;
                     }
 
@@ -130,7 +143,44 @@ public class Book1Activity extends AppCompatActivity {
         });
 
 
+
+
+
+        BtnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String HospitalName = (String) SPHospitalNames.getSelectedItem();
+                String Treatment = (String) SPHospitalTreatments.getSelectedItem();
+                Intent intent = new Intent(Book1Activity.this, Book2Activity.class);
+                intent.putExtra("HospitalName", HospitalName);
+                intent.putExtra("HospitalTreatment", Treatment);
+                startActivity(intent);
+            }
+        });
+
+
     }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.NavHome:
+                startActivity(new Intent(Book1Activity.this,HomeActivity.class));
+                break;
+
+            case R.id.NavProfile:
+                startActivity(new Intent(Book1Activity.this,ProfileActivity.class));
+                break;
+
+            case R.id.NavBook:
+                break;
+
+            case R.id.NavSetting:
+                break;
+        }
+        return true;
+    }
+
 
 
     class SPHospitalNames implements AdapterView.OnItemSelectedListener {
@@ -138,7 +188,7 @@ public class Book1Activity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String Name = parent.getItemAtPosition(position).toString();
-            if(Name!="Hospital"){
+            if(Name !="Hospital"){
                 //method.HospitalGetData(Info);
             mStore.collection("Hospitals").whereEqualTo("name", Name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -150,7 +200,7 @@ public class Book1Activity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 int x = 0;
-                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                for (QueryDocumentSnapshot ignored : task.getResult()) {
                                     x++;
                                 }
                                 String[] HospitalTreatment = new String[x+1];
@@ -199,11 +249,7 @@ public class Book1Activity extends AppCompatActivity {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String Treatment = parent.getItemAtPosition(position).toString();
             if(Treatment!="Treatment") {
-                String HospitalName = (String) SPHospitalNames.getSelectedItem();
-                Intent intent = new Intent(Book1Activity.this, Book2Activity.class);
-                intent.putExtra("HospitalName", HospitalName);
-                intent.putExtra("HospitalTreatment", Treatment);
-                startActivity(intent);
+                BtnBook.setVisibility(View.VISIBLE);
             }
         }
 

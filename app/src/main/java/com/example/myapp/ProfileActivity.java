@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,15 +40,16 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final int PICK_IMAGE_REQUEST = 22;
     TextView tvName, tvEmail, tvPhone;
     Button BtnSignOut, BtnUpImg;
-    ImageButton IBProfile2, IBHome2, IBBook2, IBSetting2;
     ImageView ImgProfile;
     String UserID ;
     Uri Filepath;
+
+    BottomNavigationView bottomNavigationView1;
 
     FirebaseAuth mAuth;
     FirebaseFirestore mStore;
@@ -67,15 +70,16 @@ public class ProfileActivity extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         tvEmail = findViewById(R.id.tvEmail);
         tvPhone = findViewById(R.id.tvPhone);
-        IBProfile2 = findViewById(R.id.IBProfile2);
-        IBBook2 = findViewById(R.id.IBBook2);
-        IBSetting2 = findViewById(R.id.IBSetting2);
-        IBHome2 = findViewById(R.id.IBHome2);
 
         mAuth = FirebaseAuth.getInstance();
         mStore = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         SR = storage.getReference();
+
+        bottomNavigationView1 = findViewById(R.id.BottomNav1);
+
+        bottomNavigationView1.setSelectedItemId(R.id.NavProfile);
+        bottomNavigationView1.setOnNavigationItemSelectedListener(this);
 
 
         UserID = mAuth.getCurrentUser().getUid();
@@ -100,13 +104,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        IBHome2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this,HomeActivity.class));
-            }
-        });
-
 
         BtnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,19 +114,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
-        IBBook2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mAuth.getCurrentUser() != null){
-                    startActivity(new Intent(ProfileActivity.this,Book1Activity.class));
-
-                }
-                else{
-                    Toast.makeText(ProfileActivity.this,"Please Sign In to Continue",Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(ProfileActivity.this,LoginActivity.class));
-                }
-            }
-        });
 
 
         ImgProfile.setOnClickListener(new View.OnClickListener() {
@@ -221,6 +205,28 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.NavHome:
+                startActivity(new Intent(ProfileActivity.this,HomeActivity.class));
+                break;
+
+            case R.id.NavProfile:
+                break;
+
+            case R.id.NavBook:
+                startActivity(new Intent(ProfileActivity.this,Book1Activity.class));
+                break;
+
+            case R.id.NavSetting:
+                break;
+        }
+        return true;
     }
 }
 
