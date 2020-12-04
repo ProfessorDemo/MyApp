@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-//    ImageButton IBProfile, IBHome, IBBook, IBSetting;
+
 
     BottomNavigationView bottomNavigationView;
 
@@ -31,45 +31,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setSelectedItemId(R.id.NavHome);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-/*
-        IBProfile = findViewById(R.id.IBProfile);
-        IBBook = findViewById(R.id.IBBook);
-        IBSetting = findViewById(R.id.IBSetting);
-        IBHome = findViewById(R.id.IBHome);
 
-
-        mAuth = FirebaseAuth.getInstance();
-
-        IBProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mAuth.getCurrentUser() != null){
-                    startActivity(new Intent(HomeActivity.this,ProfileActivity.class));
-                }
-                else{
-                    Toast.makeText(HomeActivity.this,"Please Sign In to Continue",Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(HomeActivity.this,LoginActivity.class));
-                }
-            }
-        });
-
-
-        IBBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mAuth.getCurrentUser() != null){
-                    startActivity(new Intent(HomeActivity.this,Book1Activity.class));
-
-                }
-                else{
-                    Toast.makeText(HomeActivity.this,"Please Sign In to Continue",Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(HomeActivity.this,LoginActivity.class));
-                }
-            }
-        });
-
-
- */
     }
 
 

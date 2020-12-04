@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -35,16 +33,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +53,13 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
 
     Button BtnBook,SelectDateBtn,YesBtn,NoBtn ;
     EditText PatName,PatPhone;
-    TextView DateTV;
+    TextView DateTV,textView1;
     android.widget.SearchView SVHospital;
     Spinner SPHospitalNames, SPHospitalTreatments;
     RecyclerView RVHospital;
     String UserID;
     FirebaseAuth mAuth;
+    Spinner spinner1;
 
     BottomNavigationView bottomNavigationView2;
     DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -68,7 +67,6 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
     RecyclerAdapter recyclerAdapter;
     FirebaseFirestore mStore;
     private final String TAG = "Book1Activity";
-
 
 
     @Override
@@ -83,6 +81,7 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
         NoBtn = findViewById(R.id.NoBtn);
         PatName = findViewById(R.id.PatName);
         PatPhone = findViewById(R.id.PatPhone);
+        textView1 = findViewById(R.id.textView1);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -92,6 +91,8 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
         SPHospitalNames = findViewById(R.id.SPHospitalNames);
         SVHospital = findViewById(R.id.SVHospital);
         RVHospital = findViewById(R.id.RVHospital);
+        spinner1 = findViewById(R.id.spinner1);
+
 
         RVHospital.setVisibility(View.GONE);
         SVHospital.setVisibility(View.GONE);
@@ -212,6 +213,7 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
 
                     List<String> HospitalName = new ArrayList<>();
                     List<String> HospitalDesc = new ArrayList<>();
+                    HospitalName.add("Select Hospital");
 
                     String[] HospitalIDList = new String[x+1];
                     String[] HospitalNameX = new String[x+1];
@@ -227,12 +229,30 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
                         i++;
                     }
 
+                    spinner1.setAdapter(new ArrayAdapter<>(Book1Activity.this, android.R.layout.simple_spinner_item,HospitalName));
+                    spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            if(position == 0){
+                                Toast.makeText(Book1Activity.this, "Please Select Hospital", Toast.LENGTH_SHORT).show();
+                                textView1.setText("");
+                            }else{
+                                String SHospital = parent.getItemAtPosition(position).toString();
+                                textView1.setText(SHospital);
+                            }
+                            
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+
                     ArrayAdapter adapter1 = new ArrayAdapter(Book1Activity.this, android.R.layout.simple_spinner_item, HospitalNameX);
                     adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     SPHospitalNames.setAdapter(adapter1);
                     SPHospitalNames.setOnItemSelectedListener(new SPHospitalNames());
-
-
 
                     recyclerAdapter = new RecyclerAdapter(HospitalName, HospitalDesc);
                     RVHospital.setAdapter(recyclerAdapter);
@@ -240,11 +260,7 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
                     RVHospital.addItemDecoration(Did);
                     RVHospital.setLayoutManager(new LinearLayoutManager(Book1Activity.this));
 
-
-
                     pd.dismiss();
-
-
 
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -266,6 +282,8 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
                 final String Treatment = (String) SPHospitalTreatments.getSelectedItem();
                 String Name ="";
                 String Phone ="";
+
+//if user selects to book for SomeOne else
                 if (PatName.getVisibility() == View.VISIBLE) {
 
                     Name = PatName.getText().toString().trim();
@@ -314,17 +332,56 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
 
 
                 }
+//if user selects to book for Himself
+                if (PatName.getVisibility() == View.GONE) {
+                    UserID = mAuth.getCurrentUser().getUid();
+                    GetUser getUser = new GetUser();
+                    String Name1 = getUser.GetUserName();
+                    String Phone1 = getUser.GetUserPhone();
+                    final String FName1 = Name1;
+                    final String FPhone1 = Phone1;
+                    mStore.collection("Hospitals").whereEqualTo("name",HospitalName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                final String ID1 = document.getId();
+                                mStore.collection("Hospitals").document(ID1).collection("Treatments").whereEqualTo("Name",Treatment).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            String ID;
+                                            ID = document.getId();
+                                            String newID = UUID.randomUUID().toString();
+                                            DocumentReference db = mStore.collection("Hospitals").document(ID1).collection("Treatments").document(ID).collection("Slots").document(newID);
+                                            Map<String,Object> user = new HashMap<>();
+                                            user.put("Name", FName1);
+                                            user.put("Phone", FPhone1);
+                                            user.put("UserID", UserID);
+                                            db.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(Book1Activity.this, "Appointment Forwarded for Booking for "+ FName1 +"with Phone Number " + FPhone1, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+
+
+                }
+
+
+
                 Intent intent = new Intent(Book1Activity.this, Book2Activity.class);
                 intent.putExtra("HospitalName", HospitalName);
                 intent.putExtra("HospitalTreatment", Treatment);
                 startActivity(intent);
-
-
-
             }
         });
-
-
     }
 
 
@@ -427,6 +484,41 @@ public class Book1Activity extends AppCompatActivity implements BottomNavigation
         }
 
     }
+
+    class GetUser {
+        String Name;
+        String Phone;
+
+        public String GetUserName() {
+            String UserID = mAuth.getCurrentUser().getUid();
+            DocumentReference db = mStore.collection("Users").document(UserID);
+            db.addSnapshotListener(Book1Activity.this, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                    Name = documentSnapshot.getString("name");
+
+                }
+            });
+            return Name;
+        }
+
+        public String GetUserPhone() {
+            String UserID = mAuth.getCurrentUser().getUid();
+            DocumentReference db = mStore.collection("Users").document(UserID);
+            db.addSnapshotListener(Book1Activity.this, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                    Phone = documentSnapshot.getString("phone");
+
+                }
+            });
+            return Phone;
+        }
+
+    }
+
 
 }
 
